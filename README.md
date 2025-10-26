@@ -65,32 +65,32 @@ Ce projet a été réalisé dans le cadre d'un atelier pratique pour maîtriser 
 ## 🛠️ Technologies
 
 ### Backend
-| Technologie | Version | Description |
-|-------------|---------|-------------|
-| **Java** | 17 | Langage de programmation |
-| **Jakarta EE** | 10.0.0 | Plateforme d'entreprise Java |
-| **JSF (Mojarra)** | 4.0.0 | Framework web MVC |
-| **JPA** | 3.0 | API de persistance |
-| **Hibernate** | 6.2.7 | Implémentation JPA/ORM |
-| **CDI (Weld)** | 5.1.0 | Injection de dépendances |
+| Technologie | Description |
+|-------------|-------------|
+| **Java** | Langage de programmation |
+| **Jakarta EE** |  Plateforme d'entreprise Java |
+| **JSF (Mojarra)** | Framework web MVC |
+| **JPA** | API de persistance |
+| **Hibernate** |  Implémentation JPA/ORM |
+| **CDI (Weld)** | Injection de dépendances |
 
 ### Frontend
-| Technologie | Version | Description |
-|-------------|---------|-------------|
-| **PrimeFaces** | 13.0.0 | Composants UI riches |
-| **XHTML** | - | Templates Facelets |
-| **CSS3** | - | Styles personnalisés |
-| **JavaScript** | ES6 | Interactions côté client |
+| Technologie |Description |
+|-------------|-------------|
+| **PrimeFaces** | Composants UI riches |
+| **XHTML** |  Templates Facelets |
+| **CSS3** | Styles personnalisés |
+| **JavaScript** |  Interactions côté client |
 
 ### Base de Données
-| Technologie | Version | Description |
-|-------------|---------|-------------|
-| **MySQL** | 8.0+ | SGBD relationnel |
-| **MySQL Connector/J** | 8.0.33 | Driver JDBC |
+| Technologie | Description |
+|-------------|-------------|
+| **MySQL** |SGBD relationnel |
+| **MySQL Connector/J** |Driver JDBC |
 
 ### Serveur & Build
-| Technologie | Version | Description |
-|-------------|---------|-------------|
-| **WildFly** | 27+ | Serveur d'application |
-| **Maven** | 3.6+ | Gestionnaire de build |
+| Technologie | Description |
+|-------------|-------------|
+| **WildFly** |  Serveur d'application |
+| **Maven** | Gestionnaire de build |
 
