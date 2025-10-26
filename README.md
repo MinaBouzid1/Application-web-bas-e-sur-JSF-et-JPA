@@ -5,7 +5,7 @@
 [![JSF](https://img.shields.io/badge/JSF-4.0-green.svg)](https://jakarta.ee/specifications/faces/)
 [![JPA](https://img.shields.io/badge/JPA-3.0-red.svg)](https://jakarta.ee/specifications/persistence/)
 [![PrimeFaces](https://img.shields.io/badge/PrimeFaces-13.0-yellow.svg)](https://www.primefaces.org/)
-[![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
+
 
 > 💡 Application web e-commerce  développée avec JSF, JPA, Hibernate et PrimeFaces
 
