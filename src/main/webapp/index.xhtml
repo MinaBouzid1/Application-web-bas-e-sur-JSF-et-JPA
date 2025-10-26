@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>E-Commerce - Connexion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</h:head>
+
+<h:body>
+    <div style="min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; padding: 20px;">
+
+        <p:card style="width: 100%; max-width: 1000px;">
+            <f:facet name="header">
+                <h1 style="text-align: center; color: #667eea; margin: 0;">🛒 E-Commerce FSTT</h1>
+            </f:facet>
+
+            <p:growl id="messages" showDetail="true"/>
+
+            <p:tabView>
+                <!-- Onglet Connexion -->
+                <p:tab title="Connexion">
+                    <h:form id="loginForm">
+                        <div style="max-width: 400px; margin: 0 auto;">
+                            <p:panelGrid columns="1" layout="grid" styleClass="ui-fluid">
+
+                                <p:outputLabel for="email" value="Email"/>
+                                <p:inputText id="email" value="#{internauteBean.email}" required="true"
+                                             placeholder="votre.email@exemple.com"/>
+
+                                <p:outputLabel for="password" value="Mot de passe"/>
+                                <p:password id="password" value="#{internauteBean.motDePasse}" required="true"
+                                            feedback="false" placeholder="••••••••"/>
+
+                                <p:commandButton value="Se connecter"
+                                                 action="#{internauteBean.login}"
+                                                 update=":messages"
+                                                 icon="pi pi-sign-in"
+                                                 styleClass="ui-button-success"
+                                                 style="width: 100%; margin-top: 20px;"/>
+                            </p:panelGrid>
+                        </div>
+                    </h:form>
+                </p:tab>
+
+                <!-- Onglet Inscription -->
+                <p:tab title="Inscription">
+                    <h:form id="registerForm">
+                        <div style="max-width: 600px; margin: 0 auto;">
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid">
+
+                                <p:outputLabel for="nom" value="Nom"/>
+                                <p:inputText id="nom" value="#{internauteBean.internaute.nom}" required="true"/>
+
+                                <p:outputLabel for="prenom" value="Prénom"/>
+                                <p:inputText id="prenom" value="#{internauteBean.internaute.prenom}" required="true"/>
+
+                                <p:outputLabel for="emailReg" value="Email"/>
+                                <p:inputText id="emailReg" value="#{internauteBean.internaute.email}" required="true"/>
+
+                                <p:outputLabel for="passwordReg" value="Mot de passe"/>
+                                <p:password id="passwordReg" value="#{internauteBean.internaute.motDePasse}"
+                                            required="true" match="confirmPassword"/>
+
+                                <p:outputLabel for="confirmPassword" value="Confirmer mot de passe"/>
+                                <p:password id="confirmPassword" required="true" feedback="false"/>
+
+                                <p:outputLabel for="adresse" value="Adresse"/>
+                                <p:inputTextarea id="adresse" value="#{internauteBean.internaute.adresse}" rows="3"/>
+
+                                <p:outputLabel for="telephone" value="Téléphone"/>
+                                <p:inputText id="telephone" value="#{internauteBean.internaute.telephone}"/>
+                            </p:panelGrid>
+
+                            <p:commandButton value="S'inscrire"
+                                             action="#{internauteBean.register}"
+                                             update=":messages"
+                                             icon="pi pi-user-plus"
+                                             styleClass="ui-button-info"
+                                             style="width: 100%; margin-top: 20px;"/>
+                        </div>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+        </p:card>
+    </div>
+</h:body>
+</html>

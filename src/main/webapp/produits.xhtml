@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>E-Commerce - Gestion des Produits</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <!-- Barre de navigation -->
+    <div class="navbar">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+            <h2 style="margin: 0;">📦 Gestion des Produits</h2>
+            <div style="display: flex; gap: 10px;">
+                <h:form style="display: inline;">
+                    <p:commandButton value="Retour à la vitrine"
+                                     action="vitrine.xhtml?faces-redirect=true"
+                                     icon="pi pi-arrow-left"
+                                     styleClass="ui-button-secondary"/>
+                    <p:commandButton value="Gérer Catégories"
+                                     action="categories.xhtml?faces-redirect=true"
+                                     icon="pi pi-list"
+                                     styleClass="ui-button-info"/>
+                </h:form>
+            </div>
+        </div>
+    </div>
+
+    <div style="max-width: 1400px; margin: 0 auto; padding: 0 20px;">
+        <p:growl id="messages" showDetail="true"/>
+
+        <h:form id="produitsForm">
+            <p:panel header="#{produitBean.produit.id == null ? 'Ajouter un produit' : 'Modifier le produit'}">
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid">
+
+                    <p:outputLabel for="nom" value="Nom du produit*"/>
+                    <p:inputText id="nom" value="#{produitBean.produit.nom}" required="true"/>
+
+                    <p:outputLabel for="categorie" value="Catégorie*"/>
+                    <p:selectOneMenu id="categorie" value="#{produitBean.categorieId}" required="true">
+                        <f:selectItem itemLabel="-- Sélectionner --" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{produitBean.categories}" var="cat"
+                                       itemLabel="#{cat.nom}" itemValue="#{cat.id}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="prix" value="Prix (DH)*"/>
+                    <p:inputNumber id="prix" value="#{produitBean.produit.prix}"
+                                   symbol=" DH" symbolPosition="s" decimalPlaces="2"
+                                   required="true" minValue="0"/>
+
+                    <p:outputLabel for="stock" value="Quantité en stock*"/>
+                    <p:inputNumber id="stock" value="#{produitBean.produit.quantiteStock}"
+                                   decimalPlaces="0" required="true" minValue="0"/>
+
+                    <p:outputLabel for="image" value="URL de l'image"/>
+                    <p:inputText id="image" value="#{produitBean.produit.image}"
+                                 placeholder="https://exemple.com/image.jpg"/>
+
+                    <p:outputLabel for="description" value="Description"/>
+                    <p:inputTextarea id="description" value="#{produitBean.produit.description}"
+                                     rows="4" autoResize="true"/>
+                </p:panelGrid>
+
+                <p:commandButton value="#{produitBean.produit.id == null ? 'Ajouter' : 'Modifier'}"
+                                 action="#{produitBean.save}"
+                                 update=":messages :produitsForm"
+                                 icon="pi pi-check"
+                                 styleClass="ui-button-success"/>
+
+                <p:commandButton value="Annuler"
+                                 action="#{produitBean.reset}"
+                                 update=":produitsForm"
+                                 icon="pi pi-times"
+                                 styleClass="ui-button-secondary"
+                                 style="margin-left: 10px;"/>
+            </p:panel>
+
+            <p:divider/>
+
+            <p:panel header="Liste des produits">
+                <p:dataTable id="produitsTable" var="prod" value="#{produitBean.produits}"
+                             paginator="true" rows="10"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                             styleClass="ui-table-striped" filteredValue="#{produitBean.filteredProduits}">
+
+                    <p:column headerText="ID" sortBy="#{prod.id}">
+                        <h:outputText value="#{prod.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Image">
+                        <h:graphicImage value="#{prod.image != null ? prod.image : 'https://via.placeholder.com/60x60?text=Produit'}"
+                                        style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"/>
+                    </p:column>
+
+                    <p:column headerText="Nom" sortBy="#{prod.nom}" filterBy="#{prod.nom}" filterMatchMode="contains">
+                        <h:outputText value="#{prod.nom}" style="font-weight: bold;"/>
+                    </p:column>
+
+                    <p:column headerText="Catégorie" sortBy="#{prod.categorie.nom}"
+                              filterBy="#{prod.categorie.nom}" filterMatchMode="contains">
+                        <p:badge value="#{prod.categorie.nom}" severity="info"/>
+                    </p:column>
+
+                    <p:column headerText="Prix" sortBy="#{prod.prix}">
+                        <h:outputText value="#{prod.prix} DH" style="font-weight: bold; color: #667eea;"/>
+                    </p:column>
+
+                    <p:column headerText="Stock" sortBy="#{prod.quantiteStock}">
+                        <p:badge value="#{prod.quantiteStock}"
+                                 severity="#{prod.quantiteStock gt 10 ? 'success' : (prod.quantiteStock gt 0 ? 'warning' : 'danger')}"/>
+                    </p:column>
+
+                    <p:column headerText="Actions" style="text-align: center;">
+                        <p:commandButton icon="pi pi-pencil"
+                                         styleClass="ui-button-warning ui-button-rounded"
+                                         action="#{produitBean.edit(prod)}"
+                                         update=":produitsForm"
+                                         title="Modifier"/>
+
+                        <p:commandButton icon="pi pi-trash"
+                                         styleClass="ui-button-danger ui-button-rounded"
+                                         action="#{produitBean.delete(prod.id)}"
+                                         update=":messages :produitsForm"
+                                         title="Supprimer">
+                            <p:confirm header="Confirmation"
+                                       message="Voulez-vous vraiment supprimer ce produit ?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+    </div>
+</h:body>
+</html>

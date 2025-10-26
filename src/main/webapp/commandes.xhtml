@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>E-Commerce - Mes Commandes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <!-- Barre de navigation -->
+    <div class="navbar">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+            <h2 style="margin: 0;">📦 Mes Commandes</h2>
+            <div style="display: flex; gap: 10px;">
+                <h:form style="display: inline;">
+                    <p:commandButton value="Retour aux produits"
+                                     action="vitrine.xhtml?faces-redirect=true"
+                                     icon="pi pi-arrow-left"
+                                     styleClass="ui-button-secondary"/>
+                    <p:commandButton value="Mon Panier"
+                                     action="panier.xhtml?faces-redirect=true"
+                                     icon="pi pi-shopping-cart"
+                                     styleClass="ui-button-warning"/>
+                </h:form>
+            </div>
+        </div>
+    </div>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <p:growl id="messages" showDetail="true"/>
+
+        <h:form id="commandesForm">
+            <p:dataTable id="commandes" var="commande" value="#{commandeBean.commandes}"
+                         paginator="true" rows="10" rendered="#{not empty commandeBean.commandes}"
+                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                         styleClass="ui-table-striped">
+
+                <p:column headerText="N° Commande">
+                    <h:outputText value="#{commande.id}" style="font-weight: bold;"/>
+                </p:column>
+
+                <p:column headerText="Date">
+                    <h:outputText value="#{commande.dateCommande}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Montant Total">
+                    <h:outputText value="#{commande.montantTotal} DH"
+                                  style="font-weight: bold; color: #667eea;"/>
+                </p:column>
+
+                <p:column headerText="Statut">
+                    <p:badge value="#{commande.statut}"
+                             severity="#{commandeBean.getStatutStyle(commande.statut)}"/>
+                </p:column>
+
+                <p:column headerText="Nombre d'articles">
+                    <h:outputText value="#{commande.ligneCommandes.size()}"/>
+                </p:column>
+
+                <p:column headerText="Actions" style="text-align: center;">
+                    <p:commandButton icon="pi pi-eye"
+                                     styleClass="ui-button-info ui-button-rounded"
+                                     action="#{commandeBean.viewDetails(commande)}"
+                                     update=":detailDialog"
+                                     oncomplete="PF('detailDialog').show()"
+                                     title="Voir détails"/>
+
+                    <p:commandButton icon="pi pi-times"
+                                     styleClass="ui-button-danger ui-button-rounded"
+                                     action="#{commandeBean.annulerCommande(commande.id)}"
+                                     update=":messages :commandesForm"
+                                     rendered="#{commande.statut eq 'EN_COURS'}"
+                                     title="Annuler">
+                        <p:confirm header="Confirmation"
+                                   message="Voulez-vous vraiment annuler cette commande ?"
+                                   icon="pi pi-exclamation-triangle"/>
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+            <!-- Message si aucune commande -->
+            <p:panel rendered="#{empty commandeBean.commandes}">
+                <div style="text-align: center; padding: 3rem;">
+                    <i class="pi pi-inbox" style="font-size: 5rem; color: #ccc;"></i>
+                    <h3>Aucune commande</h3>
+                    <p style="color: #666; margin-bottom: 2rem;">Vous n'avez pas encore passé de commande</p>
+                    <p:commandButton value="Commencer mes achats"
+                                     action="vitrine.xhtml?faces-redirect=true"
+                                     icon="pi pi-shopping-bag"
+                                     styleClass="ui-button-success"/>
+                </div>
+            </p:panel>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+
+        <!-- Dialog pour les détails de la commande -->
+        <p:dialog id="detailDialog" header="Détails de la commande" widgetVar="detailDialog"
+                  modal="true" width="800" responsive="true">
+            <h:panelGroup rendered="#{commandeBean.commandeSelectionnee != null}">
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid">
+                    <h:outputLabel value="Numéro de commande:"/>
+                    <h:outputText value="#{commandeBean.commandeSelectionnee.id}" style="font-weight: bold;"/>
+
+                    <h:outputLabel value="Date:"/>
+                    <h:outputText value="#{commandeBean.commandeSelectionnee.dateCommande}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                    </h:outputText>
+
+                    <h:outputLabel value="Statut:"/>
+                    <p:badge value="#{commandeBean.commandeSelectionnee.statut}"
+                             severity="#{commandeBean.getStatutStyle(commandeBean.commandeSelectionnee.statut)}"/>
+
+                    <h:outputLabel value="Montant Total:"/>
+                    <h:outputText value="#{commandeBean.commandeSelectionnee.montantTotal} DH"
+                                  style="font-weight: bold; color: #667eea; font-size: 1.2rem;"/>
+                </p:panelGrid>
+
+                <p:divider/>
+
+                <h4>Articles commandés</h4>
+                <p:dataTable var="ligne" value="#{commandeBean.commandeSelectionnee.ligneCommandes}">
+                    <p:column headerText="Produit">
+                        <h:outputText value="#{ligne.produit.nom}"/>
+                    </p:column>
+
+                    <p:column headerText="Prix unitaire">
+                        <h:outputText value="#{ligne.prixUnitaire} DH"/>
+                    </p:column>
+
+                    <p:column headerText="Quantité">
+                        <h:outputText value="#{ligne.quantite}"/>
+                    </p:column>
+
+                    <p:column headerText="Sous-total">
+                        <h:outputText value="#{ligne.sousTotal} DH" style="font-weight: bold;"/>
+                    </p:column>
+                </p:dataTable>
+            </h:panelGroup>
+        </p:dialog>
+    </div>
+</h:body>
+</html>

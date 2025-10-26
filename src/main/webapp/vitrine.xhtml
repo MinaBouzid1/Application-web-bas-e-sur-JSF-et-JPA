@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="jakarta.faces.facelets">
+
+<h:head>
+    <title>E-Commerce - Vitrine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        .product-grid-item {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.3s;
+        }
+        .product-grid-item:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <!-- Barre de navigation -->
+    <div class="navbar">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+            <h2 style="margin: 0;">🛒 E-Commerce FSTT</h2>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span>Bienvenue, #{internauteBean.currentUser.prenom}</span>
+                <h:form style="display: inline;">
+                    <p:commandButton value="Panier (#{panierBean.nombreArticles})"
+                                     action="panier.xhtml?faces-redirect=true"
+                                     icon="pi pi-shopping-cart"
+                                     styleClass="ui-button-warning"/>
+                    <p:commandButton value="Mes Commandes"
+                                     action="commandes.xhtml?faces-redirect=true"
+                                     icon="pi pi-list"
+                                     styleClass="ui-button-info"/>
+                    <p:commandButton value="Gestion"
+                                     action="categories.xhtml?faces-redirect=true"
+                                     icon="pi pi-cog"
+                                     styleClass="ui-button-secondary"/>
+                    <p:commandButton value="Déconnexion"
+                                     action="#{internauteBean.logout}"
+                                     icon="pi pi-sign-out"
+                                     styleClass="ui-button-danger"/>
+                </h:form>
+            </div>
+        </div>
+    </div>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <p:growl id="messages" showDetail="true"/>
+
+        <h:form id="vitrineForm">
+            <!-- Filtre par catégorie -->
+            <p:panel header="Filtrer par catégorie" style="margin-bottom: 2rem;">
+                <p:selectOneButton value="#{produitBean.categorieId}" onchange="PF('table').filter()">
+                    <f:selectItem itemLabel="Toutes" itemValue="#{null}"/>
+                    <f:selectItems value="#{categorieBean.categories}" var="cat"
+                                   itemLabel="#{cat.nom}" itemValue="#{cat.id}"/>
+                </p:selectOneButton>
+            </p:panel>
+
+            <!-- Grille de produits -->
+            <p:dataView id="produits" var="produit" value="#{produitBean.produits}"
+                        layout="grid" rows="12" paginator="true" widgetVar="table"
+                        paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+
+                <p:dataViewGridItem>
+                    <div class="product-grid-item">
+                        <div style="text-align: center;">
+                            <h:graphicImage value="#{produit.image != null ? produit.image : 'https://via.placeholder.com/300x200?text=Produit'}"
+                                            styleClass="product-image" alt="#{produit.nom}"/>
+
+                            <h4 style="margin: 1rem 0 0.5rem 0; color: #333;">#{produit.nom}</h4>
+
+                            <p:badge value="#{produit.categorie.nom}" severity="info"
+                                     rendered="#{produit.categorie != null}"/>
+
+                            <p style="color: #666; font-size: 0.9rem; min-height: 60px;">
+                                #{produit.description}
+                            </p>
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                                <h3 style="color: #667eea; margin: 0;">#{produit.prix} DH</h3>
+                                <p:badge value="Stock: #{produit.quantiteStock}"
+                                         severity="#{produit.quantiteStock gt 10 ? 'success' : 'warning'}"/>
+                            </div>
+
+                            <p:commandButton value="Ajouter au panier"
+                                             action="#{panierBean.ajouterAuPanier(produit.id)}"
+                                             update=":messages :vitrineForm"
+                                             icon="pi pi-shopping-cart"
+                                             styleClass="ui-button-success"
+                                             disabled="#{produit.quantiteStock le 0}"
+                                             style="width: 100%; margin-top: 1rem;"/>
+                        </div>
+                    </div>
+                </p:dataViewGridItem>
+            </p:dataView>
+        </h:form>
+    </div>
+</h:body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>E-Commerce - Mon Panier</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <!-- Barre de navigation -->
+    <div class="navbar">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+            <h2 style="margin: 0;">🛒 Mon Panier</h2>
+            <div style="display: flex; gap: 10px;">
+                <h:form style="display: inline;">
+                    <p:commandButton value="Retour aux produits"
+                                     action="vitrine.xhtml?faces-redirect=true"
+                                     icon="pi pi-arrow-left"
+                                     styleClass="ui-button-secondary"/>
+                    <p:commandButton value="Mes Commandes"
+                                     action="commandes.xhtml?faces-redirect=true"
+                                     icon="pi pi-list"
+                                     styleClass="ui-button-info"/>
+                </h:form>
+            </div>
+        </div>
+    </div>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <p:growl id="messages" showDetail="true"/>
+
+        <h:form id="panierForm">
+            <p:panel header="Contenu du panier" rendered="#{not panierBean.panierVide}">
+
+                <p:dataTable id="lignePaniers" var="ligne" value="#{panierBean.panier.lignePaniers}"
+                             styleClass="ui-table-striped">
+
+                    <p:column headerText="Produit">
+                        <h:graphicImage value="#{ligne.produit.image != null ? ligne.produit.image : 'https://via.placeholder.com/80x80?text=Produit'}"
+                                        style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;"/>
+                        <span style="margin-left: 10px; font-weight: bold;">#{ligne.produit.nom}</span>
+                    </p:column>
+
+                    <p:column headerText="Prix unitaire">
+                        <h:outputText value="#{ligne.produit.prix} DH" style="font-weight: bold; color: #667eea;"/>
+                    </p:column>
+
+                    <p:column headerText="Quantité">
+                        <p:spinner value="#{ligne.quantite}" min="1" max="#{ligne.produit.quantiteStock}"
+                                   onchange="this.form.submit()">
+                            <p:ajax event="change"
+                                    listener="#{panierBean.updateQuantite(ligne, ligne.quantite)}"
+                                    update=":messages :panierForm"/>
+                        </p:spinner>
+                    </p:column>
+
+                    <p:column headerText="Sous-total">
+                        <h:outputText value="#{ligne.sousTotal} DH" style="font-weight: bold;"/>
+                    </p:column>
+
+                    <p:column headerText="Actions" style="text-align: center;">
+                        <p:commandButton icon="pi pi-trash"
+                                         styleClass="ui-button-danger ui-button-rounded"
+                                         action="#{panierBean.supprimerLigne(ligne.id)}"
+                                         update=":messages :panierForm"
+                                         title="Supprimer">
+                            <p:confirm header="Confirmation" message="Voulez-vous vraiment supprimer ce produit ?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+                <p:divider/>
+
+                <!-- Total et Actions -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+                    <div>
+                        <p:commandButton value="Vider le panier"
+                                         action="#{panierBean.viderPanier}"
+                                         update=":messages :panierForm"
+                                         icon="pi pi-times"
+                                         styleClass="ui-button-warning">
+                            <p:confirm header="Confirmation"
+                                       message="Voulez-vous vraiment vider le panier ?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </div>
+
+                    <div style="text-align: right;">
+                        <h3 style="margin: 0 0 1rem 0;">
+                            Total: <span style="color: #667eea;">#{panierBean.total} DH</span>
+                        </h3>
+                        <p:commandButton value="Valider la commande"
+                                         action="#{commandeBean.validerCommande}"
+                                         icon="pi pi-check"
+                                         styleClass="ui-button-success ui-button-lg"/>
+                    </div>
+                </div>
+            </p:panel>
+
+            <!-- Panier vide -->
+            <p:panel rendered="#{panierBean.panierVide}">
+                <div style="text-align: center; padding: 3rem;">
+                    <i class="pi pi-shopping-cart" style="font-size: 5rem; color: #ccc;"></i>
+                    <h3>Votre panier est vide</h3>
+                    <p style="color: #666; margin-bottom: 2rem;">Ajoutez des produits pour commencer vos achats</p>
+                    <p:commandButton value="Découvrir nos produits"
+                                     action="vitrine.xhtml?faces-redirect=true"
+                                     icon="pi pi-shopping-bag"
+                                     styleClass="ui-button-success"/>
+                </div>
+            </p:panel>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+    </div>
+</h:body>
+</html>

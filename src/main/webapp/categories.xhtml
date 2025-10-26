@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>E-Commerce - Gestion des Catégories</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1rem;
+            color: white;
+            margin-bottom: 2rem;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <!-- Barre de navigation -->
+    <div class="navbar">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+            <h2 style="margin: 0;">⚙️ Gestion des Catégories</h2>
+            <div style="display: flex; gap: 10px;">
+                <h:form style="display: inline;">
+                    <p:commandButton value="Retour à la vitrine"
+                                     action="vitrine.xhtml?faces-redirect=true"
+                                     icon="pi pi-arrow-left"
+                                     styleClass="ui-button-secondary"/>
+                    <p:commandButton value="Gérer Produits"
+                                     action="produits.xhtml?faces-redirect=true"
+                                     icon="pi pi-box"
+                                     styleClass="ui-button-info"/>
+                </h:form>
+            </div>
+        </div>
+    </div>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <p:growl id="messages" showDetail="true"/>
+
+        <h:form id="categoriesForm">
+            <p:panel header="#{categorieBean.categorie.id == null ? 'Ajouter une catégorie' : 'Modifier la catégorie'}">
+                <p:panelGrid columns="2" layout="grid" styleClass="ui-fluid">
+
+                    <p:outputLabel for="nom" value="Nom de la catégorie*"/>
+                    <p:inputText id="nom" value="#{categorieBean.categorie.nom}" required="true"/>
+
+                    <p:outputLabel for="description" value="Description"/>
+                    <p:inputTextarea id="description" value="#{categorieBean.categorie.description}"
+                                     rows="4" autoResize="true"/>
+                </p:panelGrid>
+
+                <p:commandButton value="#{categorieBean.categorie.id == null ? 'Ajouter' : 'Modifier'}"
+                                 action="#{categorieBean.save}"
+                                 update=":messages :categoriesForm"
+                                 icon="pi pi-check"
+                                 styleClass="ui-button-success"/>
+
+                <p:commandButton value="Annuler"
+                                 action="#{categorieBean.reset}"
+                                 update=":categoriesForm"
+                                 icon="pi pi-times"
+                                 styleClass="ui-button-secondary"
+                                 style="margin-left: 10px;"/>
+            </p:panel>
+
+            <p:divider/>
+
+            <p:panel header="Liste des catégories">
+                <p:dataTable id="categoriesTable" var="cat" value="#{categorieBean.categories}"
+                             paginator="true" rows="10"
+                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                             styleClass="ui-table-striped">
+
+                    <p:column headerText="ID" sortBy="#{cat.id}">
+                        <h:outputText value="#{cat.id}"/>
+                    </p:column>
+
+                    <p:column headerText="Nom" sortBy="#{cat.nom}" filterBy="#{cat.nom}" filterMatchMode="contains">
+                        <h:outputText value="#{cat.nom}" style="font-weight: bold;"/>
+                    </p:column>
+
+                    <p:column headerText="Description">
+                        <h:outputText value="#{cat.description}"/>
+                    </p:column>
+
+                    <p:column headerText="Nombre de produits">
+                        <p:badge value="#{cat.produits.size()}" severity="info"/>
+                    </p:column>
+
+                    <p:column headerText="Actions" style="text-align: center;">
+                        <p:commandButton icon="pi pi-pencil"
+                                         styleClass="ui-button-warning ui-button-rounded"
+                                         action="#{categorieBean.edit(cat)}"
+                                         update=":categoriesForm"
+                                         title="Modifier"/>
+
+                        <p:commandButton icon="pi pi-trash"
+                                         styleClass="ui-button-danger ui-button-rounded"
+                                         action="#{categorieBean.delete(cat.id)}"
+                                         update=":messages :categoriesForm"
+                                         title="Supprimer">
+                            <p:confirm header="Confirmation"
+                                       message="Voulez-vous vraiment supprimer cette catégorie ?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Oui" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Non" type="button" styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+    </div>
+</h:body>
+</html>
