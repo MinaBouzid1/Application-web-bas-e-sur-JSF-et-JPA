@@ -80,7 +80,7 @@ Ce projet a été réalisé dans le cadre d'un atelier pratique pour maîtriser 
 | **PrimeFaces** | Composants UI riches |
 | **XHTML** |  Templates Facelets |
 | **CSS3** | Styles personnalisés |
-| **JavaScript** |  Interactions côté client |
+
 
 ### Base de Données
 | Technologie | Description |
