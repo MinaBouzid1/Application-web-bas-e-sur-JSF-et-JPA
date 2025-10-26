@@ -4,7 +4,7 @@
 [![Jakarta EE](https://img.shields.io/badge/Jakarta%20EE-10-blue.svg)](https://jakarta.ee/)
 [![JSF](https://img.shields.io/badge/JSF-4.0-green.svg)](https://jakarta.ee/specifications/faces/)
 [![JPA](https://img.shields.io/badge/JPA-3.0-red.svg)](https://jakarta.ee/specifications/persistence/)
-[![PrimeFaces](https://img.shields.io/badge/PrimeFaces-13.0-yellow.svg)](https://www.primefaces.org/)
+[![PrimeFaces](https://img.shields.io/badge/PrimeFaces-15.0-yellow.svg)](https://www.primefaces.org/)
 
 
 > 💡 Application web e-commerce  développée avec JSF, JPA, Hibernate et PrimeFaces
